@@ -53,7 +53,7 @@ jobs:
           # checks for submodule updates, compiler changes, updated NodeJS targets 
           key: sub-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('submodules.txt', 'build.h', 'build.c') }}
 
-      - name: Prepare submodules
+      - name: Fetch submodules
         if: steps.submodules.outputs.cache-hit != 'true'
         shell: bash
         run: |
@@ -63,12 +63,20 @@ jobs:
           cd uWebSockets
           git submodule update --init --recursive --depth 1 uSockets
           cd ..
+      - name: Prepare build script
+        shell: bash
+        run: |
 
           ${{ 
             (matrix.runner != 'macos-15' || matrix.arch != 'x64') 
             && format('{0} prepare', matrix.make) 
             || 'make prepare-macos-x64' 
           }}
+
+      - name: Build submodules
+        if: steps.submodules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
           ${{ matrix.make }} build-deps
 
       - name: Compile binaries 
