@@ -23,9 +23,24 @@ int get_cpu_count(void) {
     GetSystemInfo(&sysinfo);
     return (int)sysinfo.dwNumberOfProcessors;
 }
-#define START_FOREACH_NODEJS \
-  for (unsigned int i = 0; i < versionsQuantity; i++) { 
-#define END_FOREACH_NODEJS }
+static DWORD WINAPI _thread_fn(LPVOID _arg);
+#define _THREAD_BODY_START  /* defined per-use below */
+
+#define START_FOREACH_NODEJS(i)                                           \
+  HANDLE _handles[versionsQuantity];                                      \
+  struct { unsigned int idx; } _args[versionsQuantity];                   \
+  DWORD WINAPI _thread_fn(LPVOID _arg) {                                  \
+    unsigned int i = ((typeof(_args[0])*)_arg)->idx;                      \
+
+#define END_FOREACH_NODEJS                                                \
+    return 0;                                                             \
+  }                                                                       \
+  for (unsigned int _i = 0; _i < versionsQuantity; _i++) {               \
+    _args[_i].idx = _i;                                                   \
+    _handles[_i] = CreateThread(NULL, 0, _thread_fn, &_args[_i], 0, NULL);\
+  }                                                                       \
+  WaitForMultipleObjects(versionsQuantity, _handles, TRUE, INFINITE);    \
+  for (unsigned int _i = 0; _i < versionsQuantity; _i++) CloseHandle(_handles[_i]);
 
 #else // POSIX systems
 #define STATIC_LIB(path, name) " " path "/lib" name ".a "
