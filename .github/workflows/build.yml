@@ -90,7 +90,7 @@ jobs:
           make prebuilt-asan
           ls dist
           ${{ 
-            (matrix.runner != 'macos-15' || matrix.arch != 'x64') 
+            (matrix.runner != 'macos-15' || matrix.arch != 'x64') &&
             'make build-asan' ||
             'make build-asan-macos-x64' 
           }}
