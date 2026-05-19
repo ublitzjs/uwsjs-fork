@@ -51,7 +51,7 @@ jobs:
             uWebSockets
             targets
           # checks for submodule updates, compiler changes, updated NodeJS targets 
-          key: sub-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('submodules.txt', 'build.h', 'build.c') }}
+          key: dependencies-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('submodules.txt', 'build.h', 'build.c') }}
 
       - name: Fetch submodules
         if: steps.submodules.outputs.cache-hit != 'true'
@@ -98,9 +98,11 @@ jobs:
           ls dist
           ${{ 
             (matrix.runner != 'macos-15' || matrix.arch != 'x64') &&
-            'make build-asan' ||
-            'make build-asan-macos-x64' 
+            'make prepare-asan' ||
+            'make prepare-asan-macos-x64' 
           }}
+          ${{ matrix.make }} build-proj
+          ls dist
 
       - name: Save ASAN Binaries
         if: matrix.os != 'win32'
