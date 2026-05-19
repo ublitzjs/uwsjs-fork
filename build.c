@@ -164,7 +164,7 @@ void build(char *special_options) {
         " -I uWebSockets/uSockets/boringssl/include" \
         " -I targets/node-%s/include/node"
 
-        " -std=c++20 -fuse-ld=lld -Wno-deprecated-declarations" 
+        " -std=c++20 -Wno-deprecated-declarations" 
         STATIC_LIB("uWebSockets/uSockets/boringssl", "ssl")
         STATIC_LIB("uWebSockets/uSockets/boringssl", "crypto")
         STATIC_LIB("uWebSockets/uSockets/lsquic/src/liblsquic", "lsquic")
@@ -208,11 +208,11 @@ int main(int argc, const char* argv[]) {
   }
 
 #ifdef IS_WINDOWS
-    build("-ladvapi32");
+    build("-ladvapi32 -fuse-ld=lld");
 #elif defined(IS_MACOS)
     /* for MacOS we compile one architecture at a time */
-    build(" -pthread -fPIC -undefined dynamic_lookup" MACOS_LINK_EXTRAS);
+    build("-pthread -fPIC -undefined dynamic_lookup" MACOS_LINK_EXTRAS);
 #else
-    build(" -pthread -fPIC" LINUX_LINK_EXTRAS);
+    build("-pthread -fPIC" LINUX_LINK_EXTRAS);
 #endif
 }
