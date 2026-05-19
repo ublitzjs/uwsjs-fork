@@ -5,7 +5,7 @@
     "strictNullChecks":true
 	},
 	"typedocOptions": {
-		"name":"uWebSockets.js v0.0.1 documentation",
+		"name":"FORKED uWebSockets.js v0.0.1 documentation",
 		"entryPoints": [ "../dist/index.d.ts" ],
 		"out":"generated",
 		"excludeExternals":true,

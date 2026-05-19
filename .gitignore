@@ -5,6 +5,7 @@ build.exe
 *.tar.gz
 dist/*.node
 compile_commands.json
+zlib-1.3.1
 
 # --- nodejs ---
 bun.lock

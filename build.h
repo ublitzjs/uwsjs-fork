@@ -2,27 +2,33 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <signal.h>
+
+static volatile char CaughtSIGINT = 0;
+void SIGINTHandler(int dummy) { CaughtSIGINT = 1; }
 
 /* List of platform features */
 #if defined(_WIN32)
 #define OS "win32"
 #define IS_WINDOWS
+#define STATIC_LIB(path, name) " ./" path "/" name ".lib "
 #define C_COMPILER "clang -fms-runtime-lib=static"
 #define CXX_COMPILER "clang++ -fms-runtime-lib=static"
+#define WIN32_LEAN_AND_MEAN
 // suppress Windows "secure" deprecations
 // #define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 int get_cpu_count(void) {
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
-    return (int)sysinfo.dwNumberOfProcessors || 1;
+    return (int)sysinfo.dwNumberOfProcessors;
 }
 #define START_FOREACH_NODEJS \
   for (unsigned int i = 0; i < versionsQuantity; i++) { 
 #define END_FOREACH_NODEJS }
 
 #else // POSIX systems
-
+#define STATIC_LIB(path, name) " " path "/lib" name ".a "
 #define START_FOREACH_NODEJS(i) \
   pid_t pids[versionsQuantity]; \
   for (unsigned int i = 0; i < versionsQuantity; i++) { \
@@ -62,10 +68,8 @@ int get_cpu_count(void) {
 #endif
 
 
-#if defined(IS_MACOS)
-#elif defined(IS_LINUX)
-#else
-#endif
+
+
 
 
 /* ASAN vs. optimized build flags (used via C string literal concatenation).
@@ -104,6 +108,7 @@ int run(const char *cmd, ...) {
     vsprintf(buf, cmd, args);
     va_end(args);
     printf("--> %s\n\n", buf);
+    if(CaughtSIGINT){ printf("\nCaught SIGINT!!! Exiting now\n"); exit(0); };
     return system(buf);
 }
 

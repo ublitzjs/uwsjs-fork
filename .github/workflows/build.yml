@@ -59,7 +59,10 @@ jobs:
         run: |
 
           # only latest states
-          git submodule update --init --recursive --depth 1
+          git submodule update --init --depth 1 uWebSockets
+          cd uWebSockets
+          git submodule update --init --recursive --depth 1 uSockets
+          cd ..
 
           ${{ 
             (matrix.runner != 'macos-15' || matrix.arch != 'x64') 
