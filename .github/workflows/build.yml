@@ -89,6 +89,11 @@ jobs:
           rm dist/*.node
           make prebuilt-asan
           ls dist
+          ${{ 
+            (matrix.runner != 'macos-15' || matrix.arch != 'x64') 
+            'make build-asan' ||
+            'make build-asan-macos-x64' 
+          }}
 
       - name: Save ASAN Binaries
         if: matrix.os != 'win32'
