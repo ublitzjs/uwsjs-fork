@@ -188,6 +188,7 @@ jobs:
 
           git rev-parse HEAD > ../changes/source_commit
           cp dist/* ../changes
+          cp README.md ../changes
 
       - name: Commit binaries
         run: |
