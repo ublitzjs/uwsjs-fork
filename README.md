@@ -10,8 +10,8 @@
 8) Each template function now uses enum "TCP|SSL|QUIC|CACHE" and guards with static_assert - type safety
 
 ### Installation
-* `npm install "github:ublitzjs/uwsjs-fork#v0.0.4"`
-* `bun install "github:ublitzjs/uwsjs-fork#v0.0.4" && bun pm trust uwsjs-fork` or use "trustedDependencies" in package.json
+* `npm install "github:ublitzjs/uwsjs-fork#v0.0.1"`
+* `bun install "github:ublitzjs/uwsjs-fork#v0.0.1" && bun pm trust uwsjs-fork` or use "trustedDependencies" in package.json
 * Import with `import {App} from "uwsjs-fork"` or `require("uwsjs-fork")`
 <!-- * Browse the [documentation](https://unetworking.github.io/uWebSockets.js/generated/functions/App.html) and see the [main repo](https://github.com/uNetworking/uWebSockets). There are tons of [examples](examples) but here's the gist of it all: -->
 
