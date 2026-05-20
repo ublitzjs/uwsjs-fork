@@ -1,5 +1,6 @@
 /*
  * Authored by Alex Hultman, 2018-2026.
+ * Modified by Daniel Dyryl, 2026.
  * Intellectual property of third-party.
 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -432,11 +433,11 @@ PerIsolateData *Main(Isolate* isolate, Local<Object> exports) {
     };
 
     /* uWS namespace */
-    regFn("App", uWS_App<uWS::App>);
-    regFn("SSLApp", uWS_App<uWS::SSLApp>);
+    regFn("App", AppWrapper::init<uWS::App>);
+    regFn("SSLApp", AppWrapper::init<uWS::SSLApp>);
     
     /* H3 experimental */
-    regFn("H3App", uWS_App<uWS::H3App>);
+    regFn("H3App", AppWrapper::init<uWS::H3App>);
 
     /* Temporary KV store */
     

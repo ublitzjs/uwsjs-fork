@@ -1,6 +1,6 @@
 {
-  "name": "uWebSockets.js",
-  "version": "0.0.1",
+  "name": "uwsjs-fork",
+  "version": "0.0.4",
   "license": "Apache-2.0",
   "main": "uws.js",
   "types": "./index.d.ts",
