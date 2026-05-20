@@ -1,4 +1,6 @@
-import uws from "./uws.js";
+import {createRequire} from "node:module"
+var require = createRequire(import.meta.url)
+var uws = require("./uws.cjs")
 
 export default uws;
 
