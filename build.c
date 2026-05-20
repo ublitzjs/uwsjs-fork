@@ -1,14 +1,14 @@
 #include "build.h"
 
 void setup_nodejs_targets() {
-    if(run("mkdir \"targets\"")) {
-      printf("[NodeJS headers v22,v24,v26 are already installed]\n");
-      return;
-    };
     printf("\n<-- [Installing NodeJS headers] -->\n");
-
+    run("mkdir \"targets\"");
     START_FOREACH_NODEJS(i);
       const char* version = versions[i].name;
+      const int hasHeader = run("mkdir \"targets/node-%s\"", version);
+      run("mkdir \"targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "\"", version);
+      if(hasHeader) { printf("  [NodeJS %s is already installed]\n", version); goto before_end; }
+
       run("curl -sSL \"https://nodejs.org/dist/%s/node-%s-headers.tar.gz\" -o targets/node-%s-headers.tar.gz"
         " && "
         "tar xzf targets/node-%s-headers.tar.gz -C targets"
@@ -27,7 +27,7 @@ void setup_nodejs_targets() {
             " -o \"targets/node-%s/node.lib\"",
             version, version);
       #endif
-          run("mkdir \"targets/node-%s/c-deps\"", version);
+    before_end:
     END_FOREACH_NODEJS;
 
     printf("[Fetched NodeJS headers v22,v24,v26]\n");
@@ -126,7 +126,7 @@ void build_uSockets_and_PCH() {
 #endif
 
   START_FOREACH_NODEJS(i);
-  run("cd targets/node-%s/c-deps && " C_COMPILER SHARED_MACRO UNIX_MACRO OPT_FLAGS SHARED_INCLUDE("../../../", "%s")
+  run("cd targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER " && " C_COMPILER SHARED_MACRO UNIX_MACRO OPT_FLAGS SHARED_INCLUDE("../../../", "%s")
       " -c ../../../uWebSockets/uSockets/src/*.c "
       " ../../../uWebSockets/uSockets/src/eventing/*.c "
       " ../../../uWebSockets/uSockets/src/crypto/*.c",
@@ -134,7 +134,7 @@ void build_uSockets_and_PCH() {
       versions[i].name, versions[i].name);
 
   run(CXX_COMPILER SHARED_MACRO UNIX_MACRO OPT_FLAGS SHARED_INCLUDE("./", "%s")
-        "-std=c++20 -c src/pch.hpp -o targets/node-%s/pch.hpp.pch",
+        "-std=c++20 -c src/pch.hpp -o targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/pch.hpp.pch",
 
       versions[i].name, versions[i].name);
   END_FOREACH_NODEJS;
@@ -149,6 +149,8 @@ void build(char *special_options) {
 
   
   START_FOREACH_NODEJS(i);
+    const char* version = versions[i].name;
+    const char* abi = versions[i].abi;
     run(CXX_COMPILER OPT_FLAGS
         " -DUWS_WITH_PROXY" 
         " -DLIBUS_USE_QUIC" 
@@ -157,11 +159,11 @@ void build(char *special_options) {
         " -DWIN32_LEAN_AND_MEAN" 
         " -DUWS_REMOTE_ADDRESS_USERSPACE"
 
-        " -I uWebSockets/src" \
-        " -I uWebSockets/uSockets/src" \
-        " -I uWebSockets/uSockets/lsquic/include" \
-        " -I uWebSockets/uSockets/lsquic/wincompat" \
-        " -I uWebSockets/uSockets/boringssl/include" \
+        " -I uWebSockets/src" 
+        " -I uWebSockets/uSockets/src" 
+        " -I uWebSockets/uSockets/lsquic/include" 
+        " -I uWebSockets/uSockets/lsquic/wincompat" 
+        " -I uWebSockets/uSockets/boringssl/include" 
         " -I targets/node-%s/include/node"
 
         " -std=c++20 -Wno-deprecated-declarations" 
@@ -174,15 +176,15 @@ void build(char *special_options) {
 #endif
 
         " -shared %s"
-
-        " ./targets/node-%s/c-deps/*.o src/addon.cpp uWebSockets/uSockets/src/crypto/sni_tree.cpp"
+        " -include-pch targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/pch.hpp.pch"
+        " ./targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/*.o src/addon.cpp uWebSockets/uSockets/src/crypto/sni_tree.cpp"
         " -o dist/uws_%s_%s_%s.node",
 
-        versions[i].name,  
+        version,
 #if defined(IS_WINDOWS) // for node.lib
-        versions[i].name, 
+        version, 
 #endif
-        special_options, versions[i].name, OS, ARCH, versions[i].abi);
+        special_options, version, version, OS, ARCH, abi);
   END_FOREACH_NODEJS;
 
   printf("\n[Finished building uWebSockets.js]\n");
