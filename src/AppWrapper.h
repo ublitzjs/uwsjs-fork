@@ -987,7 +987,7 @@ namespace AppWrapper {
   
   
               } else {
-                  uWS_App_get<APP>(&uWS::TemplatedApp<false>::get, args);
+                  handler<APP>(&uWS::TemplatedApp<false>::get, args);
               }
   
           } else if constexpr (std::is_same<APP, uWS::SSLApp>::value) {
@@ -1017,20 +1017,20 @@ namespace AppWrapper {
       });
   
       regFn("head", [](args_t args) {
-          uWS_App_get<APP>(&APP::head, args);
+          handler<APP>(&APP::head, args);
       });
   
       regFn("connect", [](args_t args) {
-          uWS_App_get<APP>(&APP::connect, args);
+          handler<APP>(&APP::connect, args);
       });
   
       regFn("trace", [](args_t args) {
-          uWS_App_get<APP>(&APP::trace, args);
+          handler<APP>(&APP::trace, args);
       });
   
       /* Any http method */
       regFn("any", [](args_t args) {
-          uWS_App_get<APP>(&APP::any, args);
+          handler<APP>(&APP::any, args);
       });
   
       regFn("listen", listen<APP>);
