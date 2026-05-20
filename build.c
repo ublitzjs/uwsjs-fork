@@ -98,7 +98,7 @@ void build_boringssl() {
 #undef MACRO
 }
 
-void build_uSockets_and_PCH() {
+void build_uSockets() {
 
 #define SHARED_MACRO \
   " -DUWS_WITH_PROXY" \
@@ -130,11 +130,6 @@ void build_uSockets_and_PCH() {
       " -c ../../../uWebSockets/uSockets/src/*.c "
       " ../../../uWebSockets/uSockets/src/eventing/*.c "
       " ../../../uWebSockets/uSockets/src/crypto/*.c",
-
-      versions[i].name, versions[i].name);
-
-  run(CXX_COMPILER SHARED_MACRO UNIX_MACRO OPT_FLAGS SHARED_INCLUDE("./", "%s")
-        "-std=c++20 -c src/pch.hpp -o targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/pch.hpp.pch",
 
       versions[i].name, versions[i].name);
   END_FOREACH_NODEJS;
@@ -176,7 +171,6 @@ void build(char *special_options) {
 #endif
 
         " -shared %s"
-        " -include-pch targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/pch.hpp.pch"
         " ./targets/node-%s/" PER_TARGET_ARTIFACTS_FOLDER "/*.o src/addon.cpp uWebSockets/uSockets/src/crypto/sni_tree.cpp"
         " -o dist/uws_%s_%s_%s.node",
 
@@ -184,7 +178,7 @@ void build(char *special_options) {
 #if defined(IS_WINDOWS) // for node.lib
         version, 
 #endif
-        special_options, version, version, OS, ARCH, abi);
+        special_options, version, OS, ARCH, abi);
   END_FOREACH_NODEJS;
 
   printf("\n[Finished building uWebSockets.js]\n");
@@ -204,7 +198,7 @@ int main(int argc, const char* argv[]) {
     setup_nodejs_targets();
     build_boringssl();
     build_lsquic();
-    build_uSockets_and_PCH();
+    build_uSockets();
     printf("\n[Finished fetching + compiling dependencies]\n");
     if (argc > 1) return 0;
   }
