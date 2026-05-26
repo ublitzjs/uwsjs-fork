@@ -17,7 +17,7 @@
  */
 
 #include "Utilities.h"
-
+extern thread_local int insideCorkCallback;
 
 
 namespace AppWrapper {
@@ -465,6 +465,13 @@ namespace AppWrapper {
           setInternalPointer(reqObject, req);
   
           Local<Value> argv[] = {resObject, reqObject};
+          
+          //TODO test
+          //Local<Context> context = isolate->GetCurrentContext();
+          //insideCorkCallback++;
+          //static_cast<void>(cb.Get(isolate)->Call(context, context->Global(), 2, argv));
+          //insideCorkCallback++;
+          
           CallJS(isolate, cb.Get(isolate), 2, argv);
   
           /* Properly invalidate req */

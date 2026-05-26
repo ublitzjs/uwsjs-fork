@@ -54,7 +54,6 @@ namespace OPTIONS {
 }
 
 MaybeLocal<Value> CallJS(Isolate *isolate, Local<Function> f, int argc, Local<Value> *argv) {
-    extern int calledIntoJS;
     extern thread_local int insideCorkCallback;
     /* All calls we do into JS are properly corked, except for res.cork, where we increase the counter explicitly */
     insideCorkCallback++;
@@ -100,8 +99,6 @@ struct PerIsolateData {
 /* just a getter method for PROTOCOLS enum, based on the APP instance */
 template <class APP>
 static constexpr uint32_t getAppTypeIndex() {
-    //return std::is_same<APP, uWS::SSLApp>::value;
-
     if constexpr (std::is_same<APP, uWS::App>::value) {
         return static_cast<uint32_t>(OPTIONS::ENUM::TCP);
     } else if constexpr (std::is_same<APP, uWS::SSLApp>::value) {

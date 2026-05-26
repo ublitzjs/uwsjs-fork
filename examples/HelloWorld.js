@@ -1,6 +1,6 @@
 /* Minimal SSL/non-SSL example */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 const app = uWS./*SSL*/App({

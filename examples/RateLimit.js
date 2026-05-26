@@ -1,6 +1,6 @@
 /* RateLimit example */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 const RateLimit = (limit, interval) => { let now = 0; const last = Symbol(), count = Symbol(); setInterval(() => ++now, interval); return ws => { if (ws[last] != now) { ws[last] = now; ws[count] = 1 } else { return ++ws[count] > limit } } }
@@ -39,7 +39,7 @@ const app = uWS./*SSL*/App({
                     }
                 }
             }
-            await ws.send(JSON.stringify(dataToSendToClient));
+            ws.send(JSON.stringify(dataToSendToClient));
             console.warn('rate limit hit!');
             return ws.end();
         }

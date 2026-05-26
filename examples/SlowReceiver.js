@@ -1,6 +1,6 @@
 
 
-const uWS = require('uWebSockets.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 const wsc = require('ws');

@@ -145,12 +145,12 @@ namespace HttpResponseWrapper {
                     /* Overflow: return to JS with null */
                     overflow = true;
                     Local<Value> argv[] = {Null(isolate)};
-                    CallJS(isolate, Local<Function>::New(isolate, p), 1, argv);
+                    CallJS(isolate, p.Get(isolate), 1, argv);
                 } else if (maxRemainingBodyLength == 0) {
                     /* Fast path: Single-chunk zero-copy: wrap data directly, detach after call like onData */
                     Local<ArrayBuffer> ab = ArrayBuffer_New(isolate, (void *) data.data(), data.size());
                     Local<Value> argv[] = {ab};
-                    CallJS(isolate, Local<Function>::New(isolate, p), 1, argv);
+                    CallJS(isolate, p.Get(isolate), 1, argv);
                     ab->Detach();
                 } else {
                     /* Slow path begins: allocate buffer lazily for first non-terminal chunk */
@@ -166,7 +166,7 @@ namespace HttpResponseWrapper {
                 buffer.reset();
                 overflow = true;
                 Local<Value> argv[] = {Null(isolate)};
-                CallJS(isolate, Local<Function>::New(isolate, p), 1, argv);
+                CallJS(isolate, p.Get(isolate), 1, argv);
             } else {
                 /* Subsequent chunks: accumulate */
                 buffer->insert(buffer->end(), data.begin(), data.end());
@@ -182,7 +182,8 @@ namespace HttpResponseWrapper {
                     );
                     Local<ArrayBuffer> ab = ArrayBuffer::New(isolate, std::move(backingStore));
                     Local<Value> argv[] = {ab};
-                    CallJS(isolate, Local<Function>::New(isolate, p), 1, argv);
+                    CallJS(isolate, p.Get(isolate), 1, argv);
+                    ab->Detach();
                 }
             }
         });

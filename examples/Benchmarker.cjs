@@ -1,25 +1,26 @@
 /* Non-SSL is simply App() */
-const uWS = require('uWebSockets.js');
-	uWS.App()
-	.get('/', new uWS.DeclarativeResponse().writeHeader('content-type', 'text/plain').end('Hi'))
+const uWS = require('uwsjs-fork');
+var maxSizeOutOfTheBlue = 1024*100; //1000KiB  
+	var server = uWS.App();
+	server.get('/', new uWS.DeclarativeResponse().writeHeader('content-type', 'text/plain').end('Hi'))
 	.get('/id/:id', new uWS.DeclarativeResponse().writeHeader('content-type', 'text/plain')
 					.writeHeader('x-powered-by', 'benchmark')
 					.writeParameterValue("id")
 					.write(" ")
 					.writeQueryValue("name")
 					.end())
-	.post('/json', (res, req) => {
-		readJson(
-			res,
-			(obj) => {
-				res.writeHeader('content-type', 'application/json').end(
-					JSON.stringify(obj)
-				)
-			},
-			() => {
-				res.end('Ok')
-			}
-		)
+  server.get("/here", (res)=>{console.info("REQ"); res.end("hi")})
+	server.post('/json', (res, req) => {
+    res.onAborted(()=>{ res.aborted = true; })
+    res.collectBody(maxSizeOutOfTheBlue, (maybeArrayBuffer)=>{
+      // res.aborted != true
+      if(maybeArrayBuffer != null) {
+        console.log(JSON.parse(Buffer.from(maybeArrayBuffer).toString()))
+        res.end("OK!!!");
+      } else {
+        res.end("NOT OK!!!");
+      }
+    })
 	})
 	.listen(3000, (listenSocket) => {
 		if (listenSocket) {
@@ -27,25 +28,3 @@ const uWS = require('uWebSockets.js');
 		}
 	})
 
-function readJson(res, cb, err) {
-	let buffer
-
-	res.onData((ab, isLast) => {
-		let chunk = Buffer.from(ab)
-		if (isLast) {
-			if (buffer) {
-				cb(JSON.parse(Buffer.concat([buffer, chunk])))
-			} else {
-				cb(JSON.parse(chunk))
-			}
-		} else {
-			if (buffer) {
-				buffer = Buffer.concat([buffer, chunk])
-			} else {
-				buffer = Buffer.concat([chunk])
-			}
-		}
-	})
-
-	res.onAborted(err)
-}

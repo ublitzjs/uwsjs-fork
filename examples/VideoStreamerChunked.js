@@ -6,7 +6,7 @@
  * you know the file size. The call "end" with a huge file is the worst
  * possible way, as it copies the entire file to backpressure. */
 
-const uWS = require('uWebSockets.js');
+const uWS = require('uwsjs-fork');
 const fs = require('fs');
 
 const port = 9001;

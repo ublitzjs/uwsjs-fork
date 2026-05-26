@@ -1,6 +1,6 @@
 /* Minimal example that shuts down gracefully */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 /* We store the listen socket here, so that we can shut it down later */

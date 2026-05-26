@@ -1,21 +1,14 @@
 /* SSL/non-SSL example with async/await functions */
 
-function delay(t, val) {
-  return new Promise(function(resolve) {
-      setTimeout(function() {
-          resolve(val);
-      }, t);
-  });
-}
-
 async function someAsyncTask() {
   return delay(500, 'Hey wait for me!');
 }
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
+const delay = require("node:timers/promises").setTimeout
 const port = 9001;
 
-const app = uWS./*SSL*/App({
+uWS./*SSL*/App({
   key_file_name: 'misc/key.pem',
   cert_file_name: 'misc/cert.pem',
   passphrase: '1234'

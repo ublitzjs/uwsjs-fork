@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: windows-latest
+          - runner: blacksmith-4vcpu-windows-2025
             os: win32
             arch: x64
             make: nmake
@@ -20,11 +20,11 @@ jobs:
             os: darwin
             arch: x64 # This is a lie, but for cross-compilation
             make: make
-          - runner: ubuntu-24.04
+          - runner: blacksmith-4vcpu-ubuntu-2404
             os: linux
             arch: x64
             make: make
-          - runner: ubuntu-24.04-arm
+          - runner: blacksmith-4vcpu-ubuntu-2404-arm
             os: linux
             arch: arm64 
             make: make
@@ -148,7 +148,10 @@ jobs:
         with: 
           name: binaries-${{ matrix.os }}-${{ matrix.arch }}
           path: dist
-      - run: npm install ws && cd tests && node smoke.js
+      - run: |
+          npm install ws
+          cd dist && npm link && cd .. && npm link uwsjs-fork
+          node tests/smoke.js
   save:
     permissions:
       contents: write

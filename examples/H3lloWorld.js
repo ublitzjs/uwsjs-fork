@@ -1,6 +1,6 @@
 /* Minimal HTTP/3 example */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 /* ./quiche-client --no-verify https://localhost:9001 */

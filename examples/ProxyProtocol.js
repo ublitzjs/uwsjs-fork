@@ -1,6 +1,6 @@
 /* Minimal SSL/non-SSL example using PROXY Protocol v2 */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 3000;
 
 const app = uWS./*SSL*/App({

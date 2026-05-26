@@ -1,6 +1,6 @@
 /* A quite detailed WebSockets upgrade example "async" */
 
-const uWS = require('../dist/uws.js');
+const uWS = require('uwsjs-fork');
 const port = 9001;
 
 const app = uWS./*SSL*/App({

@@ -2,7 +2,7 @@
  * Try navigating to the adderss with Chrome and see the video
  * in real time. */
 
-const uWS = require('uWebSockets.js');
+const uWS = require('uwsjs-fork');
 const fs = require('fs');
 
 const port = 9001;
