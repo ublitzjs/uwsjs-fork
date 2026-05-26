@@ -90,7 +90,7 @@ int get_cpu_count(void) {
 #define PER_TARGET_ARTIFACTS_FOLDER "artifacts-asan"
 #else
 #define OPT_FLAGS " -flto -O3"
-#define LINUX_LINK_EXTRAS " -static-libstdc++ -static-libgcc"
+#define LINUX_LINK_EXTRAS " -static-libstdc++ -static-libgcc -s"
 #define MACOS_LINK_EXTRAS ""
 #define PER_TARGET_ARTIFACTS_FOLDER "artifacts"
 #endif

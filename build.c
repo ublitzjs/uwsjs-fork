@@ -180,10 +180,6 @@ void build(char *special_options) {
 #endif
         special_options, version, OS, ARCH, abi);
 
-#if !defined(WITH_ASAN) && !defined(IS_MACOS)
-    run("llvm-strip dist/uws_%s_%s_%s.node", OS, ARCH, abi);
-#endif
-
   END_FOREACH_NODEJS;
 
   printf("\n[Finished building uWebSockets.js]\n");
