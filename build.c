@@ -180,7 +180,10 @@ void build(char *special_options) {
 #endif
         special_options, version, OS, ARCH, abi);
 
-    run("strip dist/uws_%s_%s_%s.node", OS, ARCH, abi);
+#if !defined(WITH_ASAN) && !defined(IS_MACOS)
+    run("llvm-strip dist/uws_%s_%s_%s.node", OS, ARCH, abi);
+#endif
+
   END_FOREACH_NODEJS;
 
   printf("\n[Finished building uWebSockets.js]\n");
@@ -210,6 +213,7 @@ int main(int argc, const char* argv[]) {
 #elif defined(IS_MACOS)
     /* for MacOS we compile one architecture at a time */
     build("-pthread -fPIC -undefined dynamic_lookup" MACOS_LINK_EXTRAS);
+    /* -undefined dynamic_lookup lets library be linked dynamically */
 #else
     build("-pthread -fPIC" LINUX_LINK_EXTRAS);
 #endif
