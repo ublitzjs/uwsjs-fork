@@ -196,7 +196,9 @@ export interface HttpResponse<WebSocketUpgradeData = {}> {
     /** collectBody is a helper function making optimal use of the new onDataV2.
      * It allows efficient and easy collection of smallish HTTP request body data into RAM.
      * It accumulates all data chunks and calls handler with the complete body as an ArrayBuffer once all data has arrived.
-     * If the total body size exceeds maxSize bytes, handler is called with null instead. */
+     * If the total body size exceeds maxSize bytes, handler is called with null instead. 
+     * It does not call handler if request was aborted
+     **/
     collectBody(maxSize: number, handler: (fullBody: ArrayBuffer | null) => void): this;
     /** Handler for reading HTTP request body data. V2.
      * Must be attached before performing any asynchronous operation, otherwise data may be lost.

@@ -2,7 +2,7 @@
   "name": "uwsjs-fork",
   "version": "0.0.1",
   "license": "Apache-2.0",
-  "main": "uws.js",
+  "type": "module",
   "types": "./index.d.ts",
   "scripts": {
     "postinstall": "node ./installer.js default"
@@ -10,7 +10,7 @@
   "exports": {
     ".": {
       "import": "./ESM_wrapper.mjs",
-      "require": "./uws.js",
+      "require": "./uws.cjs",
       "types": "./index.d.ts"
     },
     "./installer": "./installer.js"
