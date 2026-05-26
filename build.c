@@ -175,10 +175,12 @@ void build(char *special_options) {
         " -o dist/uws_%s_%s_%s.node",
 
         version,
-#if defined(IS_WINDOWS) // for node.lib
+#if defined(IS_WINDOWS) /* for node.lib */
         version, 
 #endif
         special_options, version, OS, ARCH, abi);
+
+    run("strip dist/uws_%s_%s_%s.node", OS, ARCH, abi);
   END_FOREACH_NODEJS;
 
   printf("\n[Finished building uWebSockets.js]\n");
@@ -204,7 +206,7 @@ int main(int argc, const char* argv[]) {
   }
 
 #ifdef IS_WINDOWS
-    build("-ladvapi32 -fuse-ld=lld" WIN32_LINK_EXTRAS);
+    build("-ladvapi32 -fuse-ld=lld");
 #elif defined(IS_MACOS)
     /* for MacOS we compile one architecture at a time */
     build("-pthread -fPIC -undefined dynamic_lookup" MACOS_LINK_EXTRAS);

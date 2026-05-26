@@ -87,14 +87,11 @@ int get_cpu_count(void) {
 #define OPT_FLAGS " -fsanitize=address -fno-omit-frame-pointer -g -O1"
 #define LINUX_LINK_EXTRAS " -fsanitize=address"
 #define MACOS_LINK_EXTRAS " -fsanitize=address"
-/* Currently, ASAN binaries are not compiled for Windows*/
-/* #define WIN32_LINK_EXTRAS " -s" */
 #define PER_TARGET_ARTIFACTS_FOLDER "artifacts-asan"
 #else
 #define OPT_FLAGS " -flto -O3"
-#define LINUX_LINK_EXTRAS " -static-libstdc++ -static-libgcc -s"
-#define WIN32_LINK_EXTRAS " -s"
-#define MACOS_LINK_EXTRAS " -s"
+#define LINUX_LINK_EXTRAS " -static-libstdc++ -static-libgcc"
+#define MACOS_LINK_EXTRAS ""
 #define PER_TARGET_ARTIFACTS_FOLDER "artifacts"
 #endif
 
