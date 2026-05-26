@@ -204,7 +204,7 @@ int main(int argc, const char* argv[]) {
   }
 
 #ifdef IS_WINDOWS
-    build("-ladvapi32 -fuse-ld=lld");
+    build("-ladvapi32 -fuse-ld=lld" WIN32_LINK_EXTRAS);
 #elif defined(IS_MACOS)
     /* for MacOS we compile one architecture at a time */
     build("-pthread -fPIC -undefined dynamic_lookup" MACOS_LINK_EXTRAS);
