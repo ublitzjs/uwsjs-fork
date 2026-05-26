@@ -21,7 +21,7 @@ const app = uWS./*SSL*/App({
     open: (ws) => {
         console.log('A WebSocket connected!');
     },
-    message: async (ws, message, isBinary) => {
+    message: (ws, message, isBinary) => {
 
         // rateLimit(ws) returns true if over limit
         if (rateLimit(ws)) {

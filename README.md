@@ -1,13 +1,33 @@
-### Forked from https://github.com/uNetworking/uWebSockets.js
+> Forked from https://github.com/uNetworking/uWebSockets.js. I hope that some of the adjustments might be considered to be used within original uWebSockets.js someday.
 ## Modifications
 1) Parallelised compilation + caching (9 minutes -> 1:30 minutes CI)
 2) CI can run tests for all platforms
 3) branches "binaries" and "binaries-asan" have had their Git history reset
-4) GitHub Releases are published from "dist" branch, which contains only an installer. Consumer installs 2.5MB binary with "postinstall" script in package.json; 
-5) ESM wrapper exports DeclarativeResponse + modern syntax
-6) TypeScript has adjustable HTTP header autocompletion, "TemplatedApp" methods return "this".
-7) Each "...Wrapper.h" exports a namespace
-8) Each template function now uses enum "TCP|SSL|QUIC|CACHE" and guards with static_assert - type safety
+4) examples/AsyncFunction.js alongside HTTP displays WebSockets case, where an aborted client can trigger the crash of a server.
+5) GitHub Releases are published from "dist" branch, which contains only an installer. Consumer installs one GZIP binary (684KB-2.1MB) with "postinstall" script in package.json, compared to 30-40MB before
+6) ESM wrapper exports DeclarativeResponse + modern syntax
+7) TypeScript has adjustable HTTP header autocompletion, "TemplatedApp" methods return "this" for possible "TemplatedApp" extending.
+8) Each "...Wrapper.h" exports a namespace
+9) Each template function now uses enum "TCP|SSL|QUIC|CACHE" and guards with static_assert - centralised type-safe logic
+10) Somehow smaller executables (happened by chance)
+
+Before on Linux x64 or arm64
+|Project|uWebSockets.js|uwsjs-fork|
+|---|---|---|
+|GZIP|2.5MB|684KB|
+|Normal|7MB|2.4MB|
+
+Before on Darwin x64 or arm64 (MacOS)
+|Project|uWebSockets.js|uwsjs-fork|
+|---|---|---|
+|GZIP|1.8MB|1.7MB|
+|Normal|5.4MB|5.2MB|
+
+Before on Windows x64
+|Project|uWebSockets.js|uwsjs-fork|
+|---|---|---|
+|GZIP|2.2MB|2.1MB|
+|Normal|6.5MB|5.6MB|
 
 ### Installation
 * `npm install "github:ublitzjs/uwsjs-fork#v0.0.1"`

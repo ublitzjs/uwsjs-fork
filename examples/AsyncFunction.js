@@ -27,6 +27,21 @@ uWS./*SSL*/App({
       res.end(r);
     });
   }
+}).ws({
+  open(ws) {
+    console.log("WebSocket client connected");
+  },
+  async message(ws) {
+    let r = await someAsyncTask();
+    /* If we were aborted, you cannot respond */
+    if (ws.aborted) return;
+    let isBinary = false;
+    ws.send(r, isBinary);
+  },
+  close(ws) {
+    /* "message" handler might still be performing an asynchronous task */
+    ws.aborted = true;
+  }
 }).listen(port, (token) => {
   if (token) {
     console.log('Listening to port ' + port);
