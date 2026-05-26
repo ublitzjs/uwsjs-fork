@@ -149,7 +149,7 @@ jobs:
           name: binaries-${{ matrix.os }}-${{ matrix.arch }}
           path: dist
       - run: npm install ws
-      - run: cd dist && npm link && cd .. && npm link uwsjs-fork --ignore-scripts
+      - run: cd dist && npm link --ignore-scripts && cd .. && npm link uwsjs-fork --ignore-scripts
       - run: node tests/smoke.js
   save:
     permissions:
