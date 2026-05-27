@@ -1,7 +1,7 @@
 > Forked from https://github.com/uNetworking/uWebSockets.js. I hope that some of the adjustments might be considered to be used within original uWebSockets.js someday.
 ## Modifications
 1) Parallelised compilation + caching (9 minutes -> 1:30 minutes CI)
-2) CI can run tests for all platforms
+2) CI runs tests for all platforms
 3) branches "binaries" and "binaries-asan" have had their Git history reset
 4) examples/AsyncFunction.js alongside HTTP displays WebSockets case, where an aborted client can trigger the crash of a server.
 5) GitHub Releases are published from "dist" branch, which contains only an installer. Consumer installs one GZIP binary (684KB-2.1MB) with "postinstall" script in package.json, compared to 30-40MB before
@@ -9,7 +9,8 @@
 7) TypeScript has adjustable HTTP header autocompletion, "TemplatedApp" methods return "this" for possible "TemplatedApp" extending.
 8) Each "...Wrapper.h" exports a namespace
 9) Each template function now uses enum "TCP|SSL|QUIC|CACHE" and guards with static_assert - centralised type-safe logic
-10) Somehow smaller executables (happened by chance)
+10) Website with docs is published when release gets published: https://ublitzjs.github.io/uwsjs-fork/
+11) 11) Somehow smaller executables (happened by chance)
 
 Before on Linux x64 or arm64
 |Project|uWebSockets.js|uwsjs-fork|
