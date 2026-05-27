@@ -7,10 +7,20 @@ module.exports = async function downloadBinary(paramTag = tag, paramFilename = '
   var archiveName = paramFilename + ".tar.gz";
   var link = "https://github.com/" + repo + "/releases/download/" + paramTag + "/" + archiveName;
 
-  console.log("Expected binary - " + paramFilename);
-  require("node:child_process").execSync(`curl -sSL \"${link}\" -o ${archiveName} && tar -xzf ${archiveName}`, {stdio: "inherit"}); 
-  require("node:fs").rmSync(archiveName)
-  console.log("finished")
+  var execSync = require("node:child_process").execSync;
+  try {
+    console.info("Fetching " + archiveName + " for uwsjs-fork");
+    execSync(`curl -sSL \"${link}\" -o ${archiveName}`);
+  } catch (e) {
+    console.error("uwsjs-fork does not provide a binary \"" + paramFilename + "\" for your NodeJS version", e)
+  }
+  try {
+    console.info("Unpacking" + paramFilename + " for uwsjs-fork");
+    execSync(`tar -xzf ${archiveName}`, {stdio: "inherit"}); 
+    require("node:fs").rmSync(archiveName)
+  } catch (e) {
+    console.error("Cannot unpack the archive", e)
+  }
 }
 
 if (process.argv[2] == "default") {
