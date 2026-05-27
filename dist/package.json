@@ -5,7 +5,7 @@
   "type": "module",
   "types": "./index.d.ts",
   "scripts": {
-    "postinstall": "node ./installer.js default"
+    "postinstall": "node ./installer.cjs default"
   },
   "exports": {
     ".": {
@@ -13,6 +13,6 @@
       "require": "./uws.cjs",
       "types": "./index.d.ts"
     },
-    "./installer": "./installer.js"
+    "./installer": "./installer.cjs"
   }
 }
