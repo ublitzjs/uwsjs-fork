@@ -101,18 +101,15 @@ void build_boringssl() {
 void build_uSockets() {
 
 #define SHARED_MACRO \
-  " -DUWS_WITH_PROXY" \
   " -DLIBUS_USE_QUIC" \
   " -DLIBUS_USE_LIBUV" \
   " -DLIBUS_USE_OPENSSL " \
   " -DWIN32_LEAN_AND_MEAN" \
   " -D_CRT_SECURE_NO_WARNINGS" \
   " -Wno-deprecated-declarations" \
-  " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" \
-  " -DUWS_REMOTE_ADDRESS_USERSPACE" 
+  " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" 
 
 #define SHARED_INCLUDE(CWD, node_version) \
-  " -I " CWD "uWebSockets/src" \
   " -I " CWD "uWebSockets/uSockets/src" \
   " -I " CWD "uWebSockets/uSockets/lsquic/include/" \
   " -I " CWD "uWebSockets/uSockets/lsquic/wincompat" \
@@ -149,6 +146,7 @@ void build(char *special_options) {
     run(CXX_COMPILER OPT_FLAGS
         " -DUWS_WITH_PROXY" 
         " -DLIBUS_USE_QUIC" 
+        //" -DUWS_USE_SIMDUTF"
         " -DLIBUS_USE_LIBUV" 
         " -DLIBUS_USE_OPENSSL" 
         " -DWIN32_LEAN_AND_MEAN" 
@@ -157,7 +155,9 @@ void build(char *special_options) {
         " -I uWebSockets/src" 
         " -I uWebSockets/uSockets/src" 
         " -I uWebSockets/uSockets/lsquic/include" 
+#if defined(IS_WINDOWS)
         " -I uWebSockets/uSockets/lsquic/wincompat" 
+#endif
         " -I uWebSockets/uSockets/boringssl/include" 
         " -I targets/node-%s/include/node"
 
