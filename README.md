@@ -6,11 +6,15 @@
 4) examples/AsyncFunction.js alongside HTTP displays WebSockets case, where an aborted client can trigger the crash of a server.
 5) GitHub Releases are published from "dist" branch, which contains only an installer. Consumer installs one GZIP binary (684KB-2.1MB) with "postinstall" script in package.json, compared to 30-40MB before
 6) ESM wrapper exports DeclarativeResponse + modern syntax
-7) TypeScript has adjustable HTTP header autocompletion, "TemplatedApp" methods return "this" for possible "TemplatedApp" extending.
+7) TypeScript has adjustable HTTP header autocompletion, **TemplatedApp** methods return **this** for possible **TemplatedApp** extending, **TemplatedApp\<CustomHttpResponse\>** accepts interfaces, that extend default HttpResponse with custom properties to suit your API
 8) Each "...Wrapper.h" exports a namespace
 9) Each template function now uses enum "TCP|SSL|QUIC|CACHE" and guards with static_assert - centralised type-safe logic
 10) Website with docs is published when release gets published: https://ublitzjs.github.io/uwsjs-fork/
-11) 11) Somehow smaller executables (happened by chance)
+11) To make examples identify `require("uwsjs-fork")` use 
+```bash
+cd dist && npm link --ignore-scripts && cd .. && npm link uwsjs-fork --ignore-scripts
+```
+12) Smaller executables
 
 Before on Linux x64 or arm64
 |Project|uWebSockets.js|uwsjs-fork|

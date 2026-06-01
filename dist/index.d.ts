@@ -336,7 +336,7 @@ export declare enum ListenOptions {
 }
 /**
 * TemplatedApp is either an SSL or non-SSL app. See App for more info, read user manual. 
-* @template CustomHttpResponse extension of default HttpResponse to suit your API's needs
+* @template CustomHttpResponse extension of default HttpResponse to suit your API
 **/
 export interface TemplatedApp<CustomHttpResponse extends HttpResponse = HttpResponse> {
     /** Listens to hostname & port. Callback hands either false or a listen socket. */
