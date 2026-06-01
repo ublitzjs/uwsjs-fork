@@ -297,18 +297,19 @@ export interface WebSocketBehavior<UserData> {
     sendPingsAutomatically?: boolean;
     /** Upgrade handler used to intercept HTTP upgrade requests and potentially upgrade to WebSocket.
      * See UpgradeAsync and UpgradeSync example files.
+     * Unfortunately it does not capture "CustomHttpResponse"
      */
-    upgrade(res: HttpResponse<UserData>, req: HttpRequest, context: us_socket_context_t): void | Promise<void>;
-    /** Handler for new WebSocket connection. WebSocket is valid from open to close, no errors. */
-    open?: (ws: WebSocket<UserData>) => void | Promise<void>;
+    upgrade?(res: HttpResponse<UserData>, req: HttpRequest, context: us_socket_context_t): void | Promise<void>;
+    /** Handler for new WebSocket connection. WebSocket is valid from open to close, no errors. Required */
+    open(ws: WebSocket<UserData>): void | Promise<void>;
     /** Handler for a WebSocket message. Messages are given as ArrayBuffer no matter if they are binary or not. Given ArrayBuffer is valid during the lifetime of this callback (until first await or return) and will be neutered. */
-    message?: (ws: WebSocket<UserData>, message: ArrayBuffer, isBinary: boolean) => void | Promise<void>;
+    message?(ws: WebSocket<UserData>, message: ArrayBuffer, isBinary: boolean): void | Promise<void>;
     /** Handler for a dropped WebSocket message. Messages can be dropped due to specified backpressure settings. Messages are given as ArrayBuffer no matter if they are binary or not. Given ArrayBuffer is valid during the lifetime of this callback (until first await or return) and will be neutered. */
     dropped?: (ws: WebSocket<UserData>, message: ArrayBuffer, isBinary: boolean) => void | Promise<void>;
     /** Handler for when WebSocket backpressure drains. Check ws.getBufferedAmount(). Use this to guide / drive your backpressure throttling. */
     drain?: (ws: WebSocket<UserData>) => void;
-    /** Handler for close event, no matter if error, timeout or graceful close. You may not use WebSocket after this event. Do not send on this WebSocket from within here, it is closed. */
-    close?: (ws: WebSocket<UserData>, code: number, message: ArrayBuffer) => void;
+    /** Handler for close event, no matter if error, timeout or graceful close. You may not use WebSocket after this event. Do not send on this WebSocket from within here, it is closed. Required*/
+    close: (ws: WebSocket<UserData>, code: number, message: ArrayBuffer) => void;
     /** Handler for received ping control message. You do not need to handle this, pong messages are automatically sent as per the standard. */
     ping?: (ws: WebSocket<UserData>, message: ArrayBuffer) => void;
     /** Handler for received pong control message. */
@@ -333,10 +334,11 @@ export declare enum ListenOptions {
     LIBUS_LISTEN_DEFAULT = 0,
     LIBUS_LISTEN_EXCLUSIVE_PORT = 1
 }
-/* type, representing HTTP request handler */
-type HttpController = (res: HttpResponse, req: HttpRequest) => void | Promise<void>
-/** TemplatedApp is either an SSL or non-SSL app. See App for more info, read user manual. */
-export interface TemplatedApp {
+/**
+* TemplatedApp is either an SSL or non-SSL app. See App for more info, read user manual. 
+* @template CustomHttpResponse extension of default HttpResponse to suit your API's needs
+**/
+export interface TemplatedApp<CustomHttpResponse extends HttpResponse = HttpResponse> {
     /** Listens to hostname & port. Callback hands either false or a listen socket. */
     listen(host: RecognizedString, port: number, cb: (listenSocket: us_listen_socket | false) => void | Promise<void>): this;
     /** Listens to hostname & port and sets Listen Options. Callback hands either false or a listen socket. */
@@ -349,27 +351,32 @@ export interface TemplatedApp {
     listen_unix(cb: (listenSocket: us_listen_socket) => void | Promise<void>, path: RecognizedString): this;
 
     /** Registers an HTTP GET handler matching specified URL pattern. */
-    get(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    get(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP POST handler matching specified URL pattern. */
-    post(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    post(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP OPTIONS handler matching specified URL pattern. */
-    options(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    options(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP DELETE handler matching specified URL pattern. */
-    del(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    del(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP PATCH handler matching specified URL pattern. */
-    patch(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    patch(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP PUT handler matching specified URL pattern. */
-    put(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    put(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP HEAD handler matching specified URL pattern. */
-    head(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    head(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP CONNECT handler matching specified URL pattern. */
-    connect(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    connect(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP TRACE handler matching specified URL pattern. */
-    trace(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
+    trace(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
     /** Registers an HTTP handler matching specified URL pattern on any HTTP method. */
-    any(pattern: RecognizedString, handler: HttpController | DeclarativeOpCodes): this;
-    /** Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught. */
-    ws<UserData>(pattern: RecognizedString, behavior: WebSocketBehavior<UserData>): this;
+    any(pattern: RecognizedString, handler: (res: CustomHttpResponse, req: HttpRequest) => void | Promise<void> | DeclarativeOpCodes): this;
+    /**
+     * Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught. 
+     */
+    ws<UserData>(
+      pattern: RecognizedString,
+      behavior: WebSocketBehavior<UserData>
+    ): this;
     /** Publishes a message under topic, for all WebSockets under this app. See WebSocket.publish. */
     publish(topic: RecognizedString, message: RecognizedString, isBinary?: boolean, compress?: boolean): boolean;
     /** Returns number of subscribers for this topic. */
@@ -395,10 +402,11 @@ export interface TemplatedApp {
 }
 /** Constructs a non-SSL app. An app is your starting point where you attach behavior to URL routes.
  * This is also where you listen and run your app, set any SSL options (in case of SSLApp) and the like.
+* @template CustomHttpResponse extenion of default HttpResponse to suit your API's needs
  */
-export declare function App(options?: AppOptions): TemplatedApp;
+export declare function App<CustomHttpResponse extends HttpResponse = HttpResponse>(options?: AppOptions): TemplatedApp<CustomHttpResponse>;
 /** Constructs an SSL app. See App. */
-export declare function SSLApp(options: AppOptions): TemplatedApp;
+export declare function SSLApp<CustomHttpResponse extends HttpResponse = HttpResponse>(options: AppOptions): TemplatedApp<CustomHttpResponse>;
 /** Closes a uSockets listen socket. */
 export declare function us_listen_socket_close(listenSocket: us_listen_socket): void;
 /** Gets local port of socket (or listenSocket) or -1. */
